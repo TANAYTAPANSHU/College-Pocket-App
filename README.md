@@ -21,3 +21,6 @@
   <li>Make sure your app is running in the simulator or on a phone connected via USB.</li>
   <li><b>Android Studio is essential for runnning the App <b></li>  
 </ul>  
+
+
+    
