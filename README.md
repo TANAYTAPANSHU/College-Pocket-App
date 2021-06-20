@@ -2,6 +2,7 @@
 
 ## React Native is used in building the application 
 ## Application will have information about - 
+<h3>We are adding the local vendor app features into it . So that it shows about the local buisness , hotels , freelancers around the user ( around the college campus ) which will solve a realtime problem </h3>  
 <ul>
   <li>College Events</li>   
   <li>Internships & Placement Drives</li>   
@@ -9,6 +10,7 @@
   <li>University News</li>   
   <li>Club inforamtion</li>
    <li>Students blog section</li>
+  <li>Local Vendor App (High Priority)</li>
 </ul>  
 <h3>We will also try to add the local vendor app features into it . So that it shows about the local buisness , hotels , freelancers around the user ( around the college campus ) </h3>  
 
