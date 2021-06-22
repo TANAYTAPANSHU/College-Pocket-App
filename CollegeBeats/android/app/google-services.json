@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "870351467576",
+    "firebase_url": "https://native-collegebeats-default-rtdb.firebaseio.com",
+    "project_id": "native-collegebeats",
+    "storage_bucket": "native-collegebeats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870351467576:android:35a5ad0a4d2f00e1cf22cd",
+        "android_client_info": {
+          "package_name": "com.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870351467576-opp5qqi1atrmbd7a28ft121bikbesfjq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANSBA00EWGCJegNxu6URKGC9YcFcyvAUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870351467576-opp5qqi1atrmbd7a28ft121bikbesfjq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
