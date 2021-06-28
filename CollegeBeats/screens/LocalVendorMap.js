@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Callout, Marker} from 'react-native-maps';
 import {Dimensions} from 'react-native';
 import {Switch} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
@@ -9,6 +9,7 @@ import {firebaseConfig} from '../config';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
+
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -178,8 +179,10 @@ const darkMapStyle = [
   },
 ];
 
+let mapInfo ;
+
 const LocalVendorMap = () => {
-  const [isDarkOn, setIsDarkOn] = React.useState(false);
+  const [isDarkOn, setIsDarkOn] = React.useState(true);
   const [vendors, setVendors] = useState([]);
   const [vendorparse,setVendorParse] = useState([]);
 
@@ -205,50 +208,75 @@ const LocalVendorMap = () => {
  
 if(vendors.length!==0)
 {
-  console.log("Length is ",vendors.length )
+  console.log("Length is ",Object.values(vendors[0]) )
 
-function Marks()
-{
 
-  vendors.map((e,i) => {
-    console.log(Object.values(e));
+
+ 
+mapInfo = vendors.map((e,i) => {
     return(
       <Marker
-      coordinate={{
-        latitude: 13.08932,
-        longitude: 77.477333,
+      key={i}
+      style={{
+        padding:0
       }}
-      title="Vendor 1"
-      description="Mobile number: +91-xyz-99"
-    />
+      coordinate={{
+        latitude: Object.values(e)[2],
+        longitude: Object.values(e)[3],
+      }}
+   
+    >
+      <Callout tooltip={true} style={{ flex: 1, position: 'relative',opacity:0.85}} > 
+      <View style={{flexDirection:'column',elevation:2   }} >
+        <View style={{backgroundColor:'#283779',flex:1,borderRadius:10,justifyContent:'space-around' ,padding:10 }}>
+    
+          <Text style={{fontWeight:'bold',color:'white',fontSize:18 ,color:'#F1913C' }} >{Object.values(e)[0]}</Text>
+          <Text style={{fontWeight:'bold',color:'white',fontSize:14 ,color:'#F1913C' }} >{Object.values(e)[6]}</Text>
+
+          <Text style={{fontWeight:'bold',color:'white',fontSize:12,marginTop:5 }} >{Object.values(e)[1]}</Text>
+        <Text style={{fontWeight:'bold',color:'white',fontSize:12 }} >{Object.values(e)[5]}</Text>
+        <Text style={{fontWeight:'bold',color:'white',fontSize:12 }} >PhoneNo - {Object.values(e)[4]}</Text>
+    
+        </View>
+        </View>
+      </Callout>
+      </Marker>
     )
 
   })
-}
+   
+     console.log(mapInfo[0]);
+
 
 }
   return (
     <View style={{height: windowHeight, width: windowWidth}}>
+    <View style={{flexDirection:'row' , justifyContent:'center' ,backgroundColor:isDarkOn ?'#25303E':'transparent',alignItems:'center',paddingTop:5    }}>
       <View
         style={{
           flexDirection: 'row',
           left: 0,
-          backgroundColor: 'black',
-          padding: 15,
+          width:'45%',
+          backgroundColor: isDarkOn ? '#2754BA':'transparent',
+          paddingVertical:10,
           top: 0,
+          borderRadius:5,
+           borderWidth: isDarkOn ? 1 : 2,
+          borderColor:isDarkOn ? 'white':'black',
+          justifyContent:'space-around'
         }}>
    
         <Switch
           value={isDarkOn}
           onValueChange={onToggleSwitch}
-          color={'black'}
-          style={{color: 'yellow', backgroundColor: '#424242', marginLeft: 15}}
+          color={'#21469A'}
+          style={{ backgroundColor: isDarkOn ?'#F1913C': '#424242' }}
         />
-        <Text style={{color: 'white', fontSize: 18, marginLeft: 20}}>
+        <Text style={{color: isDarkOn?'white':'black', fontSize: 18 ,fontWeight:'bold'}}>
           Dark Mode
         </Text>
       </View>
-
+      </View>
       <MapView
         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
         customMapStyle={isDarkOn ? darkMapStyle : []}
@@ -261,7 +289,8 @@ function Marks()
           latitudeDelta: 0.0211,
           longitudeDelta: 0,
         }}>
-     
+          {mapInfo}
+     {/*
         <Marker
           coordinate={{
             latitude: 13.08932,
@@ -297,6 +326,8 @@ function Marks()
           title="Vendor 4"
           description="Mobile number: +91-xyz-88"
         />
+
+ */}
       </MapView>
     </View>
   );
