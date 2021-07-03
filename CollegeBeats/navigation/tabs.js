@@ -16,12 +16,19 @@ const Tabs=()=>{
 return(
     <Tab.Navigator 
     initialRouteName="Home"
+  
     tabBarOptions={{
-      activeTintColor: '#e91e63',
+      activeTintColor: 'white',
       scrollEnabled: true,
+      indicatorStyle:{
+       
+        backgroundColor:'white',
+        borderLeftWidth:2
+      },
       labelStyle: {
         fontSize: 12,
-      }
+      },
+      style: { backgroundColor: 'black' },
     }}
     
     >

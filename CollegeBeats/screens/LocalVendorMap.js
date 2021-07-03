@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Alert} from 'react-native';
 import MapView, {Callout, Marker} from 'react-native-maps';
 import {Dimensions} from 'react-native';
 import {Switch} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import * as firebase from 'firebase';
 import {firebaseConfig} from '../config';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
-
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -179,118 +178,360 @@ const darkMapStyle = [
   },
 ];
 
-let mapInfo ;
+let mapInfo;
+
+
+
 
 const LocalVendorMap = () => {
   const [isDarkOn, setIsDarkOn] = React.useState(true);
   const [vendors, setVendors] = useState([]);
-  const [vendorparse,setVendorParse] = useState([]);
+
+  const [requirement, setRequirement] = React.useState('All Vendors');
+  const [mapLat , setMapLat] = useState(13.08418) 
+  const [mapLng , setMapLng] = useState(77.489563) 
+   const [text, onChangeText] = React.useState('')
 
   const onToggleSwitch = () => setIsDarkOn(!isDarkOn);
-  
 
-  useEffect(async() => {
+  useEffect(async () => {
     // Good!
 
- 
     const myitems = firebase.database().ref('Vendors');
 
     myitems.on('value', datasnap => {
       setVendors(Object.values(datasnap.val()));
     });
-   
-  
-   
-
-
   }, []);
 
- 
-if(vendors.length!==0)
-{
-  console.log("Length is ",Object.values(vendors[0]) )
 
 
 
- 
-mapInfo = vendors.map((e,i) => {
-    return(
-      <Marker
-      key={i}
-      style={{
-        padding:0
-      }}
-      coordinate={{
-        latitude: Object.values(e)[2],
-        longitude: Object.values(e)[3],
-      }}
-   
-    >
-      <Callout tooltip={true} style={{ flex: 1, position: 'relative',opacity:0.85}} > 
-      <View style={{flexDirection:'column',elevation:2   }} >
-        <View style={{backgroundColor:'#283779',flex:1,borderRadius:10,justifyContent:'space-around' ,padding:10 }}>
+
+  if (vendors.length !== 0) {
+    mapInfo = vendors.map((e, i) => {
+      console.log(Object.values(e)[6].toLowerCase() , Object.values(e)[7].toLowerCase() , Object.values(e)[8].toLowerCase() )
+      if(requirement=="All Vendors")
+      {
+      return (
+        <Marker
+          key={i}
+          style={{
+            padding: 0,
+          }}
+          coordinate={{
+            latitude: Object.values(e)[2],
+            longitude: Object.values(e)[3],
+          }}>
+          <Callout
+            tooltip={true}
+            style={{
+              flex: 1,
+              position: 'relative',
+              opacity: 0.85,
+              flexDirection: 'row',
+              backgroundColor: 'black',
+              borderRadius: 10,
+            }}>
+            <View
+              style={{flexDirection: 'column', elevation: 2, borderRadius: 10}}>
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 10,
+                  justifyContent: 'space-around',
+                  padding: 10,
+                }}>
+                <View
+                  style={{
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      color: 'white',
+                      fontSize: 18,
+                      color: '#F1913C',
+                    }}>
+                    {Object.values(e)[0]}
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'white',
+                    fontSize: 14,
+                    color: '#F1913C',
+                  }}>
+                  {Object.values(e)[6]}
+                </Text>
+
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'white',
+                    fontSize: 12,
+                    marginTop: 5,
+                  }}>
+                  {Object.values(e)[1]}
+                </Text>
+                <Text
+                  style={{fontWeight: 'bold', color: 'white', fontSize: 12}}>
+                  {Object.values(e)[5]}
+                </Text>
+                <Text
+                  style={{fontWeight: 'bold', color: 'white', fontSize: 12}}>
+                  PhoneNo - {Object.values(e)[4]}
+                </Text>
+              </View>
+            </View>
+          </Callout>
+        </Marker>
+      );
+        }
+ else if (requirement.toLowerCase()==Object.values(e)[6].toLowerCase() || requirement.toLowerCase()==Object.values(e)[7].toLowerCase() || requirement.toLowerCase()==Object.values(e)[8].toLowerCase()){
+                  
+           
+                  return (
+                    <Marker
+                      key={i}
+                      style={{
+                        padding: 0,
+                      }}
+                      coordinate={{
+                        latitude: Object.values(e)[2],
+                        longitude: Object.values(e)[3],
+                      }}>
+                      <Callout
+                        tooltip={true}
+                        style={{
+                          flex: 1,
+                          position: 'relative',
+                          opacity: 0.85,
+                          flexDirection: 'row',
+                          backgroundColor: 'black',
+                          borderRadius: 10,
+                        }}>
+                        <View
+                          style={{flexDirection: 'column', elevation: 2, borderRadius: 10}}>
+                          <View
+                            style={{
+                              flex: 1,
+                              borderRadius: 10,
+                              justifyContent: 'space-around',
+                              padding: 10,
+                            }}>
+                            <View
+                              style={{
+                                justifyContent: 'space-between',
+                                flexDirection: 'row',
+                              }}>
+                              <Text
+                                style={{
+                                  fontWeight: 'bold',
+                                  color: 'white',
+                                  fontSize: 18,
+                                  color: '#F1913C',
+                                }}>
+                                {Object.values(e)[0]}
+                              </Text>
+                            </View>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                color: 'white',
+                                fontSize: 14,
+                                color: '#F1913C',
+                              }}>
+                              {Object.values(e)[6]}
+                            </Text>
+            
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                                color: 'white',
+                                fontSize: 12,
+                                marginTop: 5,
+                              }}>
+                              {Object.values(e)[1]}
+                            </Text>
+                            <Text
+                              style={{fontWeight: 'bold', color: 'white', fontSize: 12}}>
+                              {Object.values(e)[5]}
+                            </Text>
+                            <Text
+                              style={{fontWeight: 'bold', color: 'white', fontSize: 12}}>
+                              PhoneNo - {Object.values(e)[4]}
+                            </Text>
+                          </View>
+                        </View>
+                      </Callout>
+                    </Marker>
+                  );
+                }
+              
+    });
+  }
+
+
+
+const getGeoFromPin = (pincode) => {
+  return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyDSDL2EvvFywku3yT16chJkSYbZDisTA7I`)
+    .then((response) => response.json())
+    .then((json) => {
     
-          <Text style={{fontWeight:'bold',color:'white',fontSize:18 ,color:'#F1913C' }} >{Object.values(e)[0]}</Text>
-          <Text style={{fontWeight:'bold',color:'white',fontSize:14 ,color:'#F1913C' }} >{Object.values(e)[6]}</Text>
-
-          <Text style={{fontWeight:'bold',color:'white',fontSize:12,marginTop:5 }} >{Object.values(e)[1]}</Text>
-        <Text style={{fontWeight:'bold',color:'white',fontSize:12 }} >{Object.values(e)[5]}</Text>
-        <Text style={{fontWeight:'bold',color:'white',fontSize:12 }} >PhoneNo - {Object.values(e)[4]}</Text>
-    
-        </View>
-        </View>
-      </Callout>
-      </Marker>
-    )
-
-  })
+      if(json.status=="OK")
+      {
+        console.log(json.results[0].geometry.location.lat);
+        setMapLat(json.results[0].geometry.location.lat);
+        setMapLng(json.results[0].geometry.location.lng);
+        console.log(json.results[0].geometry.location.lng);
+      }
+      else
+      {
+        console.log("Your Data is not found")
+      }
    
-     console.log(mapInfo[0]);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
 
-}
+
+
   return (
     <View style={{height: windowHeight, width: windowWidth}}>
-    <View style={{flexDirection:'row' , justifyContent:'center' ,backgroundColor:isDarkOn ?'#25303E':'transparent',alignItems:'center',paddingTop:5    }}>
+      <View style={{height:45}}> 
+<ScrollView horizontal style={{flex:1,backgroundColor:'#25303E' }} contentContainerStyle={{justifyContent:'center',alignItems:'center' }}>
+<TouchableOpacity activeOpacity={0.80}  onPress={()=> setRequirement('All Vendors')}  style={{backgroundColor:'black',marginHorizontal:2,paddingHorizontal:15,justifyContent:'center',height:35,borderRadius:10  }}>
+  <Text style={{color:requirement=="All Vendors"?'#399DE3':'white',fontSize:15,fontWeight:'bold' }}>
+All Vendors{' '} <Ionicons name="business" size={18} color={requirement=="All Vendors"?'#399DE3':'white'} />
+  </Text>
+</TouchableOpacity>
+<TouchableOpacity   activeOpacity={0.80} onPress={()=> setRequirement('Food')}  style={{backgroundColor:'black',marginHorizontal:2,paddingHorizontal:15,justifyContent:'center',height:35,borderRadius:10  }}>
+  <Text style={{color:requirement=="Food"?'#399DE3':'white',fontSize:15,fontWeight:'bold' }}>
+Food{' '} <Ionicons name="fast-food" size={18} color={requirement=="Food"?'#399DE3':'white'} />
+  </Text>
+</TouchableOpacity>
+<TouchableOpacity activeOpacity={0.80} onPress={()=> setRequirement('Developer')}  style={{backgroundColor:'black',marginHorizontal:2,paddingHorizontal:15,justifyContent:'center',height:35,borderRadius:10  }}>
+  <Text style={{color:requirement=="Developer"?'#399DE3':'white',fontSize:15,fontWeight:'bold' }}>
+Developer  <Ionicons name="logo-octocat" size={18} color={requirement=="Developer"?'#399DE3':'white'} />
+  </Text>
+</TouchableOpacity>
+<TouchableOpacity activeOpacity={0.80} onPress={()=> setRequirement('House Help')}  style={{backgroundColor:'black',marginHorizontal:2,paddingHorizontal:15,justifyContent:'center',height:35,borderRadius:10  }}>
+  <Text style={{color:requirement=="House Help"?'#399DE3':'white',fontSize:15,fontWeight:'bold' }}>
+House Help <Ionicons name="home" size={18} color={requirement=="House Help"?'#399DE3':'white'} />
+  </Text>
+</TouchableOpacity>
+
+
+</ScrollView>
+</View>
+
       <View
         style={{
           flexDirection: 'row',
-          left: 0,
-          width:'45%',
-          backgroundColor: isDarkOn ? '#2754BA':'transparent',
-          paddingVertical:10,
-          top: 0,
-          borderRadius:5,
-           borderWidth: isDarkOn ? 1 : 2,
-          borderColor:isDarkOn ? 'white':'black',
-          justifyContent:'space-around'
+
+          backgroundColor: isDarkOn ? '#25303E' : 'transparent',
+          alignItems: 'center',
+    
+          paddingHorizontal: 5,
         }}>
-   
-        <Switch
-          value={isDarkOn}
-          onValueChange={onToggleSwitch}
-          color={'#21469A'}
-          style={{ backgroundColor: isDarkOn ?'#F1913C': '#424242' }}
-        />
-        <Text style={{color: isDarkOn?'white':'black', fontSize: 18 ,fontWeight:'bold'}}>
-          Dark Mode
-        </Text>
+        <View
+          style={{
+            flex: 3,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row',
+            backgroundColor: 'black',
+            borderWidth: 1,
+            marginHorizontal: 2,
+            borderRadius: 10,
+            borderColor: 'white',
+          }}>
+          <TextInput
+            style={{
+              width: '90%',
+
+              color: 'white',
+
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              padding: 5,
+              paddingVertical: 10,
+            }}
+            onChangeText={onChangeText}
+            value={text}
+            keyboardType={'number-pad'}
+            placeholder="search people by pincode/zipcode"
+            placeholderTextColor="grey"></TextInput>
+           <TouchableOpacity onPress={() => getGeoFromPin(text)} > 
+          <Text>
+           <Ionicons name="search" size={20} color="white" />
+         
+
+          </Text>
+          </TouchableOpacity>
+        </View>
+        {/*
+        <View
+          style={{
+            flexDirection: 'row',
+            left: 0,
+            flex: 2.1,
+            marginLeft: 10,
+            alignItems: 'center',
+            paddingHorizontal: 10,
+            backgroundColor: isDarkOn ? 'black' : 'transparent',
+            paddingVertical: 10,
+            top: 0,
+            borderRadius: 5,
+            borderWidth: isDarkOn ? 0.5 : 0.5,
+            borderColor: isDarkOn ? 'white' : 'black',
+            justifyContent: 'space-around',
+          }}>
+          <Switch
+            value={isDarkOn}
+            onValueChange={onToggleSwitch}
+            color={isDarkOn ? 'black' : 'white'}
+            style={{
+              backgroundColor: isDarkOn ? 'white' : '#424242',
+              height: 25,
+              width: 35,
+            }}
+          />
+          <Text
+            style={{
+              color: isDarkOn ? 'white' : 'black',
+              fontSize: 14,
+              fontWeight: 'bold',
+            }}>
+            Dark Mode
+          </Text>
+        </View>
+          */}
       </View>
-      </View>
+         
       <MapView
         style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
         customMapStyle={isDarkOn ? darkMapStyle : []}
         showsMyLocationButton
         showsCompass
         zoomEnabled
+        loadingEnabled
+        loadingIndicatorColor="#606060"
+        loadingBackgroundColor="#FFFFFF"
         region={{
-          latitude: 13.08418,
-          longitude: 77.489563,
+          latitude: mapLat,
+          longitude: mapLng,
           latitudeDelta: 0.0211,
           longitudeDelta: 0,
         }}>
-          {mapInfo}
-     {/*
+        {mapInfo}
+        {/*
         <Marker
           coordinate={{
             latitude: 13.08932,
