@@ -7,6 +7,7 @@ const getMoviesFromApi = () => {
       .then((json) => {
        console.log(json.results[0].geometry.location.lat);
        console.log(json.results[0].geometry.location.lng);
+     
       })
       .catch((error) => {
         console.error(error);
