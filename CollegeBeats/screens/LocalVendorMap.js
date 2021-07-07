@@ -210,7 +210,7 @@ const LocalVendorMap = () => {
 
   if (vendors.length !== 0) {
     mapInfo = vendors.map((e, i) => {
-      console.log(Object.values(e)[6].toLowerCase() , Object.values(e)[7].toLowerCase() , Object.values(e)[8].toLowerCase() )
+
       if(requirement=="All Vendors")
       {
       return (
@@ -380,13 +380,13 @@ const getGeoFromPin = (pincode) => {
   return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyDSDL2EvvFywku3yT16chJkSYbZDisTA7I`)
     .then((response) => response.json())
     .then((json) => {
-    
+      
       if(json.status=="OK")
       {
-        console.log(json.results[0].geometry.location.lat);
+       console.log(json);
         setMapLat(json.results[0].geometry.location.lat);
         setMapLng(json.results[0].geometry.location.lng);
-        console.log(json.results[0].geometry.location.lng);
+       
       }
       else
       {
@@ -465,8 +465,8 @@ House Help <Ionicons name="home" size={18} color={requirement=="House Help"?'#39
             }}
             onChangeText={onChangeText}
             value={text}
-            keyboardType={'number-pad'}
-            placeholder="search people by pincode/zipcode"
+           
+            placeholder="search people by locality, pincode/zipcode"
             placeholderTextColor="grey"></TextInput>
            <TouchableOpacity onPress={() => getGeoFromPin(text)} > 
           <Text>

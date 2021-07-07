@@ -9,6 +9,7 @@ import DSC_Club from '../screens/DSC_Club';
 import CampusNews from '../screens/CampusNews';
 import University from '../screens/University';
 import LocalVendorMap from '../screens/LocalVendorMap';
+import Root from './root';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -33,11 +34,13 @@ return(
     
     >
              <Tab.Screen name="Home" component={Homescreen} />
-        <Tab.Screen name="Current Affairs" component={News} />
-        <Tab.Screen name="Campus News" component={CampusNews} />
-        <Tab.Screen name="University" component={University} />
-        <Tab.Screen name="DSC Club Updates" component={DSC_Club} />
-        <Tab.Screen name="Local Vendor Map" component={LocalVendorMap} />
+             <Tab.Screen name="Local Vendor Map" component={LocalVendorMap} />
+        <Tab.Screen name="News" component={News} />
+
+
+      
+ 
+     
    
     </Tab.Navigator>
 )

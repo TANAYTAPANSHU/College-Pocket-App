@@ -26,7 +26,7 @@ const DSC_Club = () => {
 getData();
   if(data.length!==0)
   {
-    console.log(yes);
+    console.log("yes","Hello man" );
   }
 
   
