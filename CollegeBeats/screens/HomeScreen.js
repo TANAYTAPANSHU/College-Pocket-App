@@ -9,7 +9,7 @@ export function Homescreen({navigation}) {
    
       <Button
         title="Go to Settings"
-        onPress={() => navigation.navigate('New')  }
+        onPress={() => navigation.navigate('News')  }
       />
  
 

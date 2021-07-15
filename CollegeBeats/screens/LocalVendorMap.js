@@ -290,7 +290,7 @@ const LocalVendorMap = () => {
         </Marker>
       );
         }
- else if (requirement.toLowerCase()==Object.values(e)[6].toLowerCase() || requirement.toLowerCase()==Object.values(e)[7].toLowerCase() || requirement.toLowerCase()==Object.values(e)[8].toLowerCase()){
+ else if (requirement.toLowerCase()==Object.values(e)[7].toLowerCase()){
                   
            
                   return (

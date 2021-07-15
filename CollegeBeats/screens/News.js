@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   StatusBar,
   TextInput,
 } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 
 {
   /*
@@ -26,6 +27,18 @@ const getMoviesFromApi = () => {
 export function News(props) {
   const [name, setName] = useState('');
   const [pin, setPin] = useState();
+  const [phone, setPhone] = useState();
+  const [address,setAddress]=useState('');
+  const [business, setBusiness] = useState();
+  const pickerRef = useRef();
+
+function open() {
+  pickerRef.current.focus();
+}
+
+function close() {
+  pickerRef.current.blur();
+}
 
   {
     console.log(name);
@@ -44,13 +57,43 @@ export function News(props) {
             height: 300,
           }}
         />
-        <View style={{marginTop: 30, padding: 10}}>
+        <View style={{marginTop: 30, padding: 10,paddingLeft:20 }}>
+
+        <Picker
+  selectedValue={business}
+  ref={pickerRef}
+  onValueChange={(itemValue) =>
+    setBusiness(itemValue)
+  }>
+  <Picker.Item label="Java" value="java" />
+  <Picker.Item label="JavaScript" value="js" />
+</Picker>
+
           <TextInput
-           
             style={{
               width: '90%',
               borderRadius: 5,
-              
+              height: 50,
+              color: 'white',
+              backgroundColor: '#1A1A1A',
+              borderColor: '#88774B',
+              borderWidth: 2,
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              padding: 5,
+              paddingVertical: 10,
+            }}
+            value={name}
+            onChange={setName}
+            placeholder="Name of Person/Business"
+            placeholderTextColor="grey"></TextInput>
+             <TextInput
+             keyboardType='number-pad'
+            style={{
+              width: '90%',
+              borderRadius: 5,
+              marginTop: 15,
+
               height: 50,
               color: 'white',
               backgroundColor: '#1A1A1A',
@@ -62,31 +105,54 @@ export function News(props) {
               padding: 5,
               paddingVertical: 10,
             }}
-            value={name}
-            onChange={setName}
-            placeholder="Name of Person/Business"
+            value={phone}
+            onChange={setPhone}
+            placeholder="Phone Number"
             placeholderTextColor="grey"></TextInput>
-               <TextInput
-           style={{
-             width: '90%',
-             borderRadius: 5,
-             marginTop:15,
-             
-             height: 50,
-             color: 'white',
-             backgroundColor: '#1A1A1A',
-             borderColor: '#88774B',
-             borderWidth: 2,
+             <TextInput
+            style={{
+              width: '90%',
+              borderRadius: 5,
+              marginTop: 15,
 
-             flexDirection: 'row',
-             justifyContent: 'flex-end',
-             padding: 5,
-             paddingVertical: 10,
-           }}
-           value={pin}
-           onChange={setPin}
-           placeholder="Pincode"
-           placeholderTextColor="grey"></TextInput>
+              height: 50,
+              color: 'white',
+              backgroundColor: '#1A1A1A',
+              borderColor: '#88774B',
+              borderWidth: 2,
+
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              padding: 5,
+              paddingVertical: 10,
+            }}
+            value={address}
+            onChange={setAddress}
+            placeholder="Address of Person/Business"
+            placeholderTextColor="grey"></TextInput>
+          <TextInput
+            keyboardType='number-pad'
+            style={{
+              width: '90%',
+              borderRadius: 5,
+              marginTop: 15,
+
+              height: 50,
+              color: 'white',
+              backgroundColor: '#1A1A1A',
+              borderColor: '#88774B',
+              borderWidth: 2,
+
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              padding: 5,
+              paddingVertical: 10,
+            }}
+            value={pin}
+            onChange={setPin}
+            placeholder="Pincode"
+            placeholderTextColor="grey"></TextInput>
+            
         </View>
       </ScrollView>
     </>
