@@ -1,10 +1,15 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {ScrollView, Text, View, StyleSheet, Image, Button} from 'react-native';
+import {ThemeContext} from '../util/ThemeManager';
 
 export function Homescreen({navigation}) {
+  const {theme} = React.useContext(ThemeContext);
+
   return (
-    <View style={{backgroundColor: '#0F0F0F'}}>
-      <ScrollView style={{backgroundColor: '#0F0F0F'}}>
+    <View style={{backgroundColor: theme === 'light' ? '#FFF' : '#0F0F0F'}}>
+      <ScrollView
+        style={{backgroundColor: theme === 'light' ? '#FFF' : '#0F0F0F'}}>
         <Image
           source={{
             uri: 'https://firebasestorage.googleapis.com/v0/b/native-collegebeats.appspot.com/o/logo.png?alt=media&token=07c54632-f5b2-422e-b922-12cbefa6086c',
@@ -17,7 +22,7 @@ export function Homescreen({navigation}) {
             borderWidth: 1,
           }}
         />
-
+        {console.log(theme)}
         <View style={{marginTop: 30}}>
           <Image
             source={{
