@@ -18,7 +18,7 @@
 ## Setup in Local Machine 
 <ul>
   <li>Clone the repo on your local Machine </li>
-  <li> In CLI run  <u> yarn install </u>  </li>
+  <li> In CLI run  <u> yarn / npm install </u>  </li>
   <li> Run  <u> yarn start </u> this will run the app.</li>
   <li>Make sure your app is running in the simulator or on a phone connected via USB.</li>
   <li><b>Android Studio is essential for runnning the App <b></li>  
