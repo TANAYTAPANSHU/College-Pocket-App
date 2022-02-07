@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
@@ -6,11 +7,13 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  Modal,
+  Linking,
+  Button,
 } from 'react-native';
 import MapView, {Callout, Marker} from 'react-native-maps';
 import {Dimensions} from 'react-native';
 import * as firebase from 'firebase';
+import {collection, doc, onSnapshot} from 'firebase/firestore';
 import {firebaseConfig} from '../config';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,6 +29,323 @@ if (!firebase.apps.length) {
 } else {
   firebase.app(); // if already initialized, use that one
 }
+
+let dbFirestore = firebase.firestore();
+
+let mapInfo;
+
+const OpenPhone = async number => {
+  await Linking.openURL(`tel:${number}`);
+};
+
+const LocalVendorMap = () => {
+  const [vendors, setVendors] = useState([]);
+
+  const [requirement, setRequirement] = React.useState('All Vendors');
+  const [mapLat, setMapLat] = useState(13.08418); 
+  const [mapLng, setMapLng] = useState(77.489563);
+  const [text, onChangeText] = React.useState('');
+  const {theme} = React.useContext(ThemeContext);
+  const {toggleTheme} = React.useContext(ThemeContext);
+  function fetchData() {
+ 
+    firebase
+      .database()
+      .ref('Vendors')
+      .on('value', datasnap => {
+        if(datasnap.val())
+        {
+        setVendors(Object.values(datasnap.val()));
+        }
+      })
+  }
+
+ 
+
+  useEffect(() => {
+    fetchData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (vendors.length !== 0) {
+    mapInfo = vendors.map((e, i) => {
+
+  return (
+        <Marker
+          key={i}
+          style={{
+            padding: 0,
+          }}
+          coordinate={{
+            latitude: parseFloat(e.lat, 10),
+            longitude: parseFloat(e.long, 10),
+          }}>
+          <Callout
+            tooltip={true}
+            onPress={() => {
+              OpenPhone(e.phone);
+            }}
+            style={{
+              flex: 1,
+              position: 'relative',
+              opacity: 0.85,
+              flexDirection: 'row',
+              backgroundColor: 'black',
+              borderRadius: 10,
+            }}>
+            <View
+              style={{
+                flexDirection: 'column',
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'space-around',
+                  padding: 10,
+                }}>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 16,
+                    color: '#F1913C',
+                  }}>
+                  {e.name}
+                </Text>
+
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 10,
+                    color: '#F1913C',
+                  }}>
+                  {e.address}
+                </Text>
+                {console.log(e.address,e.lat,e.long)}
+                {e.phone ? (
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      fontSize: 10,
+                      color: 'green',
+                    }}>
+                    {e.phone}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+          </Callout>
+        </Marker>
+      );
+}
+      
+    );
+  }
+  const getGeoFromPin = pincode => {
+    return fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyDSDL2EvvFywku3yT16chJkSYbZDisTA7I`,
+    )
+      .then(response => response.json())
+      .then(json => {
+        if (json.status === 'OK') {
+          console.log(json);
+          setMapLat(json.results[0].geometry.location.lat);
+          setMapLng(json.results[0].geometry.location.lng);
+        } else {
+          console.log('Your Data is not found');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  return (
+    <View style={{height: windowHeight, width: windowWidth}}>
+      <View style={{height: 45}}>
+        <ScrollView
+          horizontal
+          style={{flex: 1, backgroundColor: '#25303E'}}
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+       
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setRequirement('All Vendors')}
+            style={{
+              backgroundColor: 'black',
+              marginHorizontal: 2,
+              paddingHorizontal: 15,
+              justifyContent: 'center',
+              height: 35,
+              borderRadius: 10,
+            }}>
+            <Text
+              style={{
+                color: requirement === 'All Vendors' ? '#399DE3' : 'white',
+                fontSize: 15,
+                marginRight: 5,
+                fontWeight: 'bold',
+              }}>
+              All Vendors{' '}
+              <Icon
+                name="building"
+                size={20}
+                color={requirement === 'All Vendors' ? '#399DE3' : 'white'}
+              />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setRequirement('Food')}
+            style={{
+              backgroundColor: 'black',
+              marginHorizontal: 2,
+              paddingHorizontal: 15,
+              justifyContent: 'center',
+              height: 35,
+              borderRadius: 10,
+            }}>
+            <Text
+              style={{
+                color: requirement === 'Food' ? '#399DE3' : 'white',
+                fontSize: 15,
+                fontWeight: 'bold',
+              }}>
+              Food{' '}
+              <MaterialCommunityIcons
+                name="food"
+                size={18}
+                color={requirement === 'Food' ? '#399DE3' : 'white'}
+              />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setRequirement('Developer')}
+            style={{
+              backgroundColor: 'black',
+              marginHorizontal: 2,
+              paddingHorizontal: 15,
+              justifyContent: 'center',
+              height: 35,
+              borderRadius: 10,
+            }}>
+            <Text
+              style={{
+                color: requirement === 'Developer' ? '#399DE3' : 'white',
+                fontSize: 15,
+                fontWeight: 'bold',
+              }}>
+              Developer{' '}
+              <MaterialCommunityIcons
+                name="dev-to"
+                size={18}
+                color={requirement === 'Developer' ? '#399DE3' : 'white'}
+              />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setRequirement('House Help')}
+            style={{
+              backgroundColor: 'black',
+              marginHorizontal: 2,
+              paddingHorizontal: 15,
+              justifyContent: 'center',
+              height: 35,
+              borderRadius: 10,
+            }}>
+            <Text
+              style={{
+                color: requirement === 'House Help' ? '#399DE3' : 'white',
+                fontSize: 15,
+                fontWeight: 'bold',
+              }}>
+              House Help{' '}
+              <MaterialCommunityIcons
+                name="human-greeting"
+                size={18}
+                color={requirement === 'House Help' ? '#399DE3' : 'white'}
+              />
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+
+      <View
+        style={{
+          flexDirection: 'row',
+
+          alignItems: 'center',
+
+          paddingHorizontal: 5,
+        }}>
+        <View
+          style={{
+            flex: 3,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row',
+            backgroundColor: 'black',
+            borderWidth: 1,
+            marginHorizontal: 2,
+            borderRadius: 10,
+            borderColor: 'white',
+          }}>
+          <TextInput
+            style={{
+              width: '90%',
+
+              color: 'white',
+
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              padding: 5,
+              paddingVertical: 10,
+            }}
+            onChangeText={onChangeText}
+            value={text}
+            placeholder="search people by locality, pincode/zipcode"
+            placeholderTextColor="grey"
+          />
+          <TouchableOpacity onPress={() => getGeoFromPin(text)}>
+            <Text>
+              <MaterialCommunityIcons
+                name="search-web"
+                size={20}
+                color="white"
+              />
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <MapView
+        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
+        customMapStyle={darkMapStyle}
+        showsMyLocationButton
+        showsCompass
+        zoomEnabled
+        loadingEnabled
+        loadingIndicatorColor="#606060"
+        loadingBackgroundColor="#FFFFFF"
+        region={{
+          latitude: mapLat,
+          longitude: mapLng,
+          latitudeDelta: 0.0211,
+          longitudeDelta: 0,
+        }}>
+        {mapInfo}
+      </MapView>
+    </View>
+  );
+};
+
+export default LocalVendorMap;
 
 const darkMapStyle = [
   {
@@ -188,314 +508,3 @@ const darkMapStyle = [
     ],
   },
 ];
-
-let mapInfo;
-
-const LocalVendorMap = () => {
-  const [vendors, setVendors] = useState([]);
-
-  const [requirement, setRequirement] = React.useState('All Vendors');
-  const [mapLat, setMapLat] = useState(13.08418);
-  const [mapLng, setMapLng] = useState(77.489563);
-  const [text, onChangeText] = React.useState('');
-  const {theme} = React.useContext(ThemeContext);
-  const {toggleTheme} = React.useContext(ThemeContext);
-  function fetchData() {
-    firebase
-      .database()
-      .ref('Vendors')
-      .on('value', datasnap => {
-        setVendors(Object.values(datasnap.val()));
-      });
-  }
-
-  async function publishData() {
-    const newReference = await firebase.database().ref('Vendors').push();
-
-    newReference
-      .set({
-        address: 'Thammenahalli Village, Bengaluru, Karnataka 560107',
-        lat: 13.093894087332437,
-        long: 77.48991477748975,
-        name: 'mahesh Kumar',
-        work: 'developer',
-      })
-      .then(() => console.log('done'));
-  }
-
-  useEffect(() => {
-    fetchData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (vendors.length !== 0) {
-    mapInfo = vendors.map((e, i) => {
-      return (
-        <Marker
-          key={i}
-          style={{
-            padding: 0,
-          }}
-          coordinate={{
-            latitude: parseFloat(e.lat, 10),
-            longitude: parseFloat(e.long, 10),
-          }}>
-
-          <Callout
-            tooltip={true}
-            style={{
-              flex: 1,
-              position: 'relative',
-              opacity: 0.85,
-              flexDirection: 'row',
-              backgroundColor: 'black',
-              borderRadius: 10,
-            }}>
-            <View
-              style={{
-                flexDirection: 'column',
-              }}>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'space-around',
-                  padding: 10,
-                }}>
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 16,
-                    color: '#F1913C',
-                  }}>
-                  {e.name}
-                </Text>
-
-                <Text
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: 10,
-                    color: '#F1913C',
-                  }}>
-                  {e.address}
-                </Text>
-                {e.phone ? (
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      fontSize: 10,
-                      color: 'green',
-                    }}>
-                    {e.phone}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-          </Callout>
-        </Marker>
-      );
-    });
-  }
-  const getGeoFromPin = pincode => {
-    return fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=AIzaSyDSDL2EvvFywku3yT16chJkSYbZDisTA7I`,
-    )
-      .then(response => response.json())
-      .then(json => {
-        if (json.status === 'OK') {
-          console.log(json);
-          setMapLat(json.results[0].geometry.location.lat);
-          setMapLng(json.results[0].geometry.location.lng);
-        } else {
-          console.log('Your Data is not found');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
-  return (
-    <View style={{height: windowHeight, width: windowWidth}}>
-      <View style={{height: 45}}>
-        <ScrollView
-          horizontal
-          style={{flex: 1, backgroundColor: '#25303E'}}
-          contentContainerStyle={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => toggleTheme()}
-            style={{
-              backgroundColor: 'black',
-              marginHorizontal: 2,
-              paddingHorizontal: 15,
-              justifyContent: 'center',
-              height: 35,
-              borderRadius: 10,
-            }}>
-            <Text
-              style={{
-                color: requirement === 'All Vendors' ? '#399DE3' : 'white',
-                fontSize: 15,
-                marginRight: 5,
-                fontWeight: 'bold',
-              }}>
-              All Vendors{' '}
-              <Icon
-                name="building"
-                size={20}
-                color={requirement === 'All Vendors' ? '#399DE3' : 'white'}
-              />
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={publishData}
-            style={{
-              backgroundColor: 'black',
-              marginHorizontal: 2,
-              paddingHorizontal: 15,
-              justifyContent: 'center',
-              height: 35,
-              borderRadius: 10,
-            }}>
-            <Text
-              style={{
-                color: requirement === 'Food' ? '#399DE3' : 'white',
-                fontSize: 15,
-                fontWeight: 'bold',
-              }}>
-              Food{' '}
-              <MaterialCommunityIcons
-                name="food"
-                size={18}
-                color={requirement === 'Food' ? '#399DE3' : 'white'}
-              />
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setRequirement('Developer')}
-            style={{
-              backgroundColor: 'black',
-              marginHorizontal: 2,
-              paddingHorizontal: 15,
-              justifyContent: 'center',
-              height: 35,
-              borderRadius: 10,
-            }}>
-            <Text
-              style={{
-                color: requirement === 'Developer' ? '#399DE3' : 'white',
-                fontSize: 15,
-                fontWeight: 'bold',
-              }}>
-              Developer{' '}
-              <MaterialCommunityIcons
-                name="dev-to"
-                size={18}
-                color={requirement === 'Developer' ? '#399DE3' : 'white'}
-              />
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setRequirement('House Help')}
-            style={{
-              backgroundColor: 'black',
-              marginHorizontal: 2,
-              paddingHorizontal: 15,
-              justifyContent: 'center',
-              height: 35,
-              borderRadius: 10,
-            }}>
-            <Text
-              style={{
-                color: requirement === 'House Help' ? '#399DE3' : 'white',
-                fontSize: 15,
-                fontWeight: 'bold',
-              }}>
-              House Help{' '}
-              <MaterialCommunityIcons
-                name="human-greeting"
-                size={18}
-                color={requirement === 'House Help' ? '#399DE3' : 'white'}
-              />
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
-      <View
-        style={{
-          flexDirection: 'row',
-
-          alignItems: 'center',
-
-          paddingHorizontal: 5,
-        }}>
-        <View
-          style={{
-            flex: 3,
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row',
-            backgroundColor: 'black',
-            borderWidth: 1,
-            marginHorizontal: 2,
-            borderRadius: 10,
-            borderColor: 'white',
-          }}>
-          <TextInput
-            style={{
-              width: '90%',
-
-              color: 'white',
-
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              padding: 5,
-              paddingVertical: 10,
-            }}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="search people by locality, pincode/zipcode"
-            placeholderTextColor="grey"
-          />
-          <TouchableOpacity onPress={() => getGeoFromPin(text)}>
-            <Text>
-              <MaterialCommunityIcons
-                name="search-web"
-                size={20}
-                color="white"
-              />
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <MapView
-        style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-        customMapStyle={darkMapStyle}
-        showsMyLocationButton
-        showsCompass
-        zoomEnabled
-        loadingEnabled
-        loadingIndicatorColor="#606060"
-        loadingBackgroundColor="#FFFFFF"
-        region={{
-          latitude: mapLat,
-          longitude: mapLng,
-          latitudeDelta: 0.0211,
-          longitudeDelta: 0,
-        }}>
-        {mapInfo}
-      </MapView>
-    </View>
-  );
-};
-
-export default LocalVendorMap;
