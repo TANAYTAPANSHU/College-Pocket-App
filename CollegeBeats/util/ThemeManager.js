@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 
 export const ThemeContext = React.createContext();
 
 export const ThemeProvider = ({children}) => {
-  const [theme, setTheme] = React.useState('light');
+  const [theme, setTheme] = React.useState('dark');
 
   const toggleTheme = () => {
     if (theme === 'light') {
